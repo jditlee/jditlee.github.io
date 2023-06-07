@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="theme-color" content="#3b3e43"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no"/><title>【推荐】多目标排序以及MMOE原理解析 - Neptune</title><meta name="description" content="Neptune个人网站,主要发布推荐算法系列文章,包括召回,排序所涉及的算法模型,同时也会记录一些nlp相关的技术,没事发发牢骚,非严谨技术博客,非文学瞎写博客,追寻自由,Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. "/><meta property="og:description" content="Neptune个人网站,主要发布推荐算法系列文章,包括召回,排序所涉及的算法模型,同时也会记录一些nlp相关的技术,没事发发牢骚,非严谨技术博客,非文学瞎写博客,追寻自由,Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. "/>    <meta name="keywords" content="python,推荐算法,机器学习,深度学习,Solo,博客,闲谈,杂思,neptune,召回,排序,算法,凌陨心"/><link rel="dns-prefetch" href="https://jditlee.github.io"/><link rel="dns-prefetch" href="https://unpkg.com"/><link rel="preconnect" href="https://jditlee.github.io"><link rel="icon" type="image/png" href="https://b3log.org/images/brand/solo-128.png"/><link rel="apple-touch-icon" href="https://b3log.org/images/brand/solo-128.png"><link rel="shortcut icon" type="image/x-icon" href="https://b3log.org/images/brand/solo-128.png"><meta name="copyright" content="B3log"/><meta http-equiv="Window-target" content="_top"/><meta property="og:locale" content="zh_CN"/><meta property="og:title" content="【推荐】多目标排序以及MMOE原理解析 - Neptune"/><meta property="og:site_name" content="Neptune"/><meta property="og:url"      content="https://jditlee.github.io/articles/2023/05/25/1685011984247.html?"/><meta property="og:image" content="https://b3log.org/images/brand/solo-128.png"/><link rel="search" type="application/opensearchdescription+xml" title="【推荐】多目标排序以及MMOE原理解析 - Neptune" href="/opensearch.xml"><link href="https://jditlee.github.io/rss.xml" title="RSS" type="application/rss+xml" rel="alternate"/><link rel="manifest" href="https://jditlee.github.io/manifest.json">        <link rel="canonical" href="https://jditlee.github.io/articles/2023/05/25/1685011984247.html">        <link rel="stylesheet"
+              href="https://jditlee.github.io/skins/Bubble/css/base.css?1679484362319"/>
+            <link rel="prev" title="git修改提交的用户名邮箱" href="https://jditlee.github.io/articles/2023/05/24/1684913175528.html">
+            <link rel="next" title="Linux纯命令行配置clash，自由访问GPT api" href="https://jditlee.github.io/articles/2023/05/30/1685437715197.html">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8b11e2d34ba7af67792b99d5d53aae3b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script src="https://unpkg.com/vditor@3.8.15/dist/js/icons/ant.js" async="" id="vditorIconScript"></script></head>
+<body class="fn__flex-column">
+<div id="pjax" class="fn__flex-1">
+    
+    <progress class="fn__progress"></progress>
+    <header class="header header--article">
+        <div class="wrapper header__title">
+            <h1 class="header__h1 fn__flex-inline">
+                <a href="https://jditlee.github.io" rel="start">Neptune</a>
+            </h1>
+            <h2 class="header__desc header__desc--title">Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. </h2>
+            <div class="header__desc">
+                <!-- 公告栏可使用 HTML、JavaScript，比如可以在此加入第三方统计 js -->
+            </div>
+            <svg class="header__down" id="headerDown" viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M15.992 25.304c-0 0-0 0-0.001 0-0.516 0-0.981-0.216-1.31-0.563l-0.001-0.001-14.187-14.996c-0.306-0.323-0.494-0.76-0.494-1.241 0-0.998 0.809-1.807 1.807-1.807 0.517 0 0.983 0.217 1.313 0.565l0.001 0.001 12.875 13.612 12.886-13.612c0.331-0.348 0.797-0.565 1.314-0.565 0.481 0 0.918 0.187 1.242 0.493l-0.001-0.001c0.723 0.687 0.755 1.832 0.072 2.555l-14.201 14.996c-0.33 0.348-0.795 0.564-1.311 0.564-0.001 0-0.003 0-0.004 0h0z"></path>
+            </svg>
+        </div>
+    </header>
+    <div class="side__menu">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M30 18h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM30 6.25h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM2 25.75h28c1.1 0 2 0.9 2 2s-0.9 2-2 2h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2z"></path>
+        </svg>
+        <span>
+            &nbsp; menu
+        </span>
+    </div>
+    <div class="side__main">
+        <div class="side__bg"></div>
+        <div class="side__panel">
+            <svg class="side__close ft__a" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                 viewBox="0 0 20 20">
+                <path d="M18.362 19.324c-0.902 0.902-2.363 0.902-3.263 0l-5.098-5.827-5.098 5.825c-0.902 0.902-2.363 0.902-3.263 0-0.902-0.902-0.902-2.363 0-3.263l5.304-6.057-5.306-6.061c-0.902-0.902-0.902-2.361 0-3.263s2.361-0.902 3.263 0l5.1 5.829 5.098-5.829c0.902-0.902 2.361-0.902 3.263 0s0.902 2.363 0 3.263l-5.304 6.061 5.304 6.057c0.902 0.902 0.902 2.363 0 3.265z"></path>
+            </svg>
+
+            <div class="side__header">
+                <a href="https://jditlee.github.io" rel="start"><img class="side__logo" alt="Neptune" src="https://b3logfile.com/avatar/1538398651528_1677663103667.png?imageView2/1/w/128/h/128/interlace/0/q/100"></a>
+
+                <div class="side__meta">
+                    32 文章 <br>
+                    <span data-uvstaturl="https://jditlee.github.io">0</span> 浏览
+                    
+                </div>
+            </div>
+
+            <div class="side__title">
+                <span>ღゝ◡╹)ノ❤️</span>
+            </div>
+            <ul class="side__nav">
+                <li>
+                    <a href="https://jditlee.github.io" rel="start">
+                            Neptune
+                    </a>
+                </li>
+                    <li>
+                        <a href="/about" target="_self">关于</a>
+                    </li>
+                    <li>
+                        <a href="/mind" target="_self">碎碎念</a>
+                    </li>
+                    <li>
+                        <a href="/my-github-repos" target="_self"><img
+                                class="page-icon" src="/images/github-icon.png" alt="我的开源">我的开源</a>
+                    </li>
+                <li>
+                    <a href="https://jditlee.github.io/categories.html">分类</a>
+                </li>
+                <li>
+                    <a href="https://jditlee.github.io/tags.html">标签墙</a>
+                </li>
+                <li>
+                    <a href="https://jditlee.github.io/archives.html">存档</a>
+                </li>
+                <li>
+                    <a href="https://jditlee.github.io/links.html">友链</a>
+                </li>
+                <li>
+                    <a rel="alternate" href="https://jditlee.github.io/rss.xml">RSS</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="article__top" style="background-image: url(https://b3logfile.com/file/2023/05/image-GXuMQpV.png?imageView2/2/w/1280/format/jpg/interlace/1/q/100)">
+        <div style="background-image: url(https://b3logfile.com/file/2023/05/image-GXuMQpV.png?imageView2/2/w/1280/format/jpg/interlace/1/q/100)"></div>
+        <canvas id="articleTop"></canvas>
+    </div>
+    <div class="article">
+        <div class="ft__center">
+            <div class="article__meta">
+                <time>
+                    2023-05-25
+                </time>
+                /
+                    <a rel="tag"
+                       href="https://jditlee.github.io/tags/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95">推荐算法</a> &nbsp;
+                    <a rel="tag"
+                       href="https://jditlee.github.io/tags/MMOE">MMOE</a> &nbsp;
+                    <a rel="tag"
+                       href="https://jditlee.github.io/tags/MTL">MTL</a> &nbsp;
+                    <a rel="tag"
+                       href="https://jditlee.github.io/tags/%E6%8E%92%E5%BA%8F">排序</a> &nbsp;
+            </div>
+            <h2 class="article__title">
+                【推荐】多目标排序以及MMOE原理解析
+                    <sup>
+                        置顶！
+                    </sup>
+            </h2>
+<div class="article__share"
+     data-title="【推荐】多目标排序以及MMOE原理解析"
+     data-blogtitle="Neptune"
+     data-url="https://jditlee.github.io/articles/2023/05/25/1685011984247.html"
+     data-avatar="https://b3logfile.com/avatar/1538398651528_1677663103667.png?imageView2/1/w/128/h/128/interlace/0/q/100">
+    <span class="item" data-type="qqz">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M22.824 13.989l-8.348 6.287s3.351 0.522 8.404 0.461l-0.23-1.040 7.2-6.549c0.132-0.12 0.183-0.312 0.129-0.487s-0.203-0.299-0.377-0.314l-9.492-0.856-3.708-9.213c-0.068-0.169-0.226-0.279-0.401-0.279s-0.333 0.11-0.401 0.279l-3.708 9.213-9.492 0.856c-0.174 0.015-0.323 0.139-0.377 0.314s-0.004 0.366 0.129 0.487l7.2 6.549-2.158 9.742c-0.040 0.178 0.026 0.365 0.168 0.474 0.142 0.107 0.331 0.115 0.481 0.021l8.158-5.165 8.158 5.165c0.070 0.045 0.147 0.066 0.225 0.066 0.090 0 0.18-0.029 0.256-0.086 0.142-0.109 0.208-0.295 0.168-0.474l-1.707-7.704c0.732-0.386 1.538-1.040 1.538-1.040s-3.195 1.638-14.664 0.838l8.312-6.325s-0.327-0.534-10.744-0.914c-0.697-0.026 8.493-1.83 15.281-0.305z"></path>
+        </svg>
+    </span>
+    <span class="item" data-type="wechat">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M9.062 9.203c0-0.859-0.562-1.422-1.422-1.422-0.844 0-1.703 0.562-1.703 1.422 0 0.844 0.859 1.406 1.703 1.406 0.859 0 1.422-0.562 1.422-1.406zM20.672 17.125c0-0.562-0.562-1.125-1.422-1.125-0.562 0-1.125 0.562-1.125 1.125 0 0.578 0.562 1.141 1.125 1.141 0.859 0 1.422-0.562 1.422-1.141zM16.984 9.203c0-0.859-0.562-1.422-1.406-1.422-0.859 0-1.703 0.562-1.703 1.422 0 0.844 0.844 1.406 1.703 1.406 0.844 0 1.406-0.562 1.406-1.406zM26.906 17.125c0-0.562-0.578-1.125-1.422-1.125-0.562 0-1.125 0.562-1.125 1.125 0 0.578 0.562 1.141 1.125 1.141 0.844 0 1.422-0.562 1.422-1.141zM22.75 10.922c-0.359-0.047-0.719-0.063-1.094-0.063-5.375 0-9.625 4.016-9.625 8.953 0 0.828 0.125 1.625 0.359 2.375-0.359 0.031-0.703 0.047-1.063 0.047-1.422 0-2.547-0.281-3.969-0.562l-3.953 1.984 1.125-3.406c-2.828-1.984-4.531-4.547-4.531-7.656 0-5.391 5.094-9.625 11.328-9.625 5.563 0 10.453 3.391 11.422 7.953zM32 19.687c0 2.547-1.688 4.813-3.969 6.516l0.859 2.828-3.109-1.703c-1.141 0.281-2.281 0.578-3.406 0.578-5.391 0-9.625-3.688-9.625-8.219s4.234-8.219 9.625-8.219c5.094 0 9.625 3.688 9.625 8.219z"></path>
+        </svg>
+    </span>
+    <span class="item" data-type="weibo">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M13.444 27.064c-5.3 0.525-9.875-1.875-10.219-5.35-0.344-3.481 3.675-6.719 8.969-7.244 5.3-0.525 9.875 1.875 10.212 5.35 0.35 3.481-3.669 6.725-8.963 7.244zM24.038 15.521c-0.45-0.137-0.762-0.225-0.525-0.819 0.512-1.287 0.563-2.394 0.006-3.188-1.038-1.481-3.881-1.406-7.137-0.037 0 0-1.025 0.444-0.762-0.363 0.5-1.613 0.425-2.956-0.356-3.737-1.769-1.769-6.469 0.069-10.5 4.1-3.013 3.006-4.763 6.212-4.763 8.981 0 5.287 6.787 8.506 13.425 8.506 8.7 0 14.494-5.056 14.494-9.069 0-2.431-2.044-3.806-3.881-4.375z"></path>
+            <path d="M29.819 5.833c-2.1-2.331-5.2-3.219-8.063-2.612v0c-0.663 0.144-1.081 0.794-0.938 1.45 0.144 0.662 0.788 1.081 1.45 0.938 2.038-0.431 4.238 0.2 5.731 1.856s1.9 3.913 1.256 5.888v0c-0.206 0.644 0.144 1.331 0.788 1.544 0.644 0.206 1.331-0.144 1.544-0.787v-0.006c0.9-2.762 0.331-5.938-1.769-8.269z"></path>
+            <path d="M26.588 8.752c-1.025-1.138-2.538-1.569-3.925-1.269-0.569 0.119-0.931 0.688-0.813 1.256 0.125 0.569 0.688 0.931 1.25 0.806v0c0.681-0.144 1.419 0.069 1.919 0.619 0.5 0.556 0.637 1.313 0.419 1.975v0c-0.175 0.55 0.125 1.15 0.681 1.331 0.556 0.175 1.15-0.125 1.331-0.681 0.438-1.356 0.163-2.906-0.863-4.037z"></path>
+            <path d="M13.738 20.771c-0.188 0.319-0.594 0.469-0.912 0.337-0.319-0.125-0.412-0.488-0.231-0.794 0.188-0.306 0.581-0.456 0.894-0.337 0.313 0.113 0.425 0.469 0.25 0.794zM12.044 22.933c-0.512 0.819-1.613 1.175-2.438 0.8-0.813-0.369-1.056-1.319-0.544-2.119 0.506-0.794 1.569-1.15 2.388-0.806 0.831 0.356 1.1 1.3 0.594 2.125zM13.969 17.146c-2.519-0.656-5.369 0.6-6.463 2.819-1.119 2.262-0.037 4.781 2.506 5.606 2.638 0.85 5.75-0.456 6.831-2.894 1.069-2.394-0.262-4.85-2.875-5.531z"></path>
+        </svg>
+    </span>
+    <span class="item" data-type="twitter">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M32.003 6.075c-1.175 0.525-2.444 0.875-3.769 1.031 1.356-0.813 2.394-2.1 2.887-3.631-1.269 0.75-2.675 1.3-4.169 1.594-1.2-1.275-2.906-2.069-4.794-2.069-3.625 0-6.563 2.938-6.563 6.563 0 0.512 0.056 1.012 0.169 1.494-5.456-0.275-10.294-2.888-13.531-6.862-0.563 0.969-0.887 2.1-0.887 3.3 0 2.275 1.156 4.287 2.919 5.463-1.075-0.031-2.087-0.331-2.975-0.819 0 0.025 0 0.056 0 0.081 0 3.181 2.263 5.838 5.269 6.437-0.55 0.15-1.131 0.231-1.731 0.231-0.425 0-0.831-0.044-1.237-0.119 0.838 2.606 3.263 4.506 6.131 4.563-2.25 1.762-5.075 2.813-8.156 2.813-0.531 0-1.050-0.031-1.569-0.094 2.913 1.869 6.362 2.95 10.069 2.95 12.075 0 18.681-10.006 18.681-18.681 0-0.287-0.006-0.569-0.019-0.85 1.281-0.919 2.394-2.075 3.275-3.394z"></path>
+        </svg>
+    </span>
+    <span class="item__qr"></span>
+</div>        </div>
+        <div class="wrapper">
+            <section class="vditor-reset articles article__content">
+                <h1 id="toc_h1_0">【推荐】多目标排序以及MMOE原理解析</h1>
+<h2 id="toc_h2_1">一、多目标排序简介</h2>
+<p>推荐系统中的显示反馈较少，因为大多数用户反馈都不是直接评分。推荐系统大多数基于隐式反馈来推荐，比如说用户的点击、收藏、分享、观看时长、购买等，在评估用户满意度的时候会存在一些认知偏差，主要包括目标偏差、物品偏差、用户偏差。</p>
+<p>目标偏差：目标不同，偏好程度不同。比如电商场景中，购买这个行为表达的偏好高于收藏；比如视频的场景中，观看时长超过20s这个行为表达的偏好高于点击。</p>
+<p>物品偏差：被推荐物品需要多个衡量目标，单个目标衡量不全面。短视频推荐，如果仅以视频播放完成率为目标，就可能在视频中留下悬念，需要观看下一个，让用户多操作，用户会不满意；比如信息流推荐，如果仅以点击率为目标，就可能被标题党钻了空子；如果仅以转发分享为目标，就可能存在转发保平安之类的内容。</p>
+<p>用户偏差：不同用户表达满意的方式不同。比如知乎上观看文章，有的用户喜欢点赞，有的用户喜欢收藏。</p>
+<p>综上，多目标排序的目的就是：</p>
+<p>通过一些方法来解决目标偏差、物品偏差和用户偏差的问题，完成多目标的优化。比如说，电商场景，希望能够在优化GMV（付款+未付款）的基础上提高点击率；信息流场景，希望在提高用户点击率的基础上提高用户关注，点赞，评论等行为。因此推荐系统做到后期，往往会向多目标学习演化，承担起更多的业务目标，以提高用户的粘性。</p>
+<p>‍</p>
+<p>多目标排序的主要方式：</p>
+<ol>
+<li>改变样本权重</li>
+<li>多模型分数融合</li>
+<li>多任务学习（MTL）</li>
+</ol>
+<p>大厂的一些实现方案：</p>
+<p><img src="https://b3logfile.com/file/2023/05/image-GXuMQpV.png?imageView2/2/w/1280/format/jpg/interlace/1/q/100" alt="image.png"></p>
+<h2 id="toc_h2_2">二、MMOE的网络结构</h2>
+<p>多任务模型的发展中，参数共享主要有一下三个阶段，shared-bottom,moe,mmoe</p>
+<p><strong>Shared-Bottom</strong> Multi-task Model 是多任务学习（Multi-Task Learning，MTL）中最经典的 DNN 网络结构，如下图：</p>
+<p><img src="https://b3logfile.com/file/2023/05/image-f2Llxsj.png?imageView2/2/w/1280/format/jpg/interlace/1/q/100" alt="image.png"></p>
+<p><strong>MOE</strong>修改了其中的shared bottom部分，改成由一组神经网络结构来作为专家网络（expert network），再加上一个门控网络</p>
+<p><img src="https://b3logfile.com/file/2023/05/image-qRAUYG2.png?imageView2/2/w/1280/format/jpg/interlace/1/q/100" alt="image.png"></p>
+<p><strong>MMOE</strong>就是在MOE的基础上，增加多个gate门控网络来对应不同的task，对不同的task任务学习expert的不同组合模型，即针对任务自适应加权。</p>
+<p><img src="https://b3logfile.com/file/2023/05/image-HR2kCrl.png?imageView2/2/w/1280/format/jpg/interlace/1/q/100" alt="image.png"></p>
+<p><img src="https://b3logfile.com/file/2023/05/image-LUUXSN5.png?imageView2/2/w/1280/format/jpg/interlace/1/q/100" alt="image.png"></p>
+<p>MMOE主要是解决传统的 multi-task 网络 (主要采用 Shared-Bottom Structure) 可能在任务相关性不强的情况下效果不佳的问题, 有研究揭示了 multi-task 模型的效果高度依赖于任务之间的相关性; MMoE 借鉴 MoE 的思路, 引入多个 Experts (即多个 NN 网络) 网络, 然后再对每个 task 分别引入一个 gating network, gating 网络针对各自的 task 学习 experts 网络的不同组合模式, 即对 experts 网络的输出进行自适应加权. 这一点非常像 Attention, Experts 网络学习出 embedding 序列, 而 gating 网络学习自适应的权重并对 Experts 网络的输出进行加权求和, 得到对应的结果之后再分别输入到各个 task 对应的 tower 网络中. 注意 gating 网络的数量和任务的数量是一致的.</p>
+<p>‍</p>
+<p><strong>提升效果的trick</strong>：</p>
+<ul>
+<li>如果MTL中有个别任务数据十分稀疏，可以直接尝试一下何凯明大神的Focal loss！笔者在短视频推荐方向尝试过这个loss，对于点赞/分享/转发这种特别稀疏的信号，加上它说不定你会啪一下站起来的。</li>
+<li>仔细分析和观察数据分布，如果某个任务数据不稀疏，但负例特别多，或者简单负例特别多，对负例进行降权/找更难的负例也可能有奇效果哦。正所谓：负例为王。</li>
+<li>另外一个其实算trick吧？将任务A的预测作为任务B的输入。实现的时候需要注意：任务B的梯度别再直接传给A的预测了。</li>
+</ul>
+<p><strong>网络细节上</strong>：</p>
+<ul>
+<li>Gate<br>
+把输入通过一个线性变换映射到num_expert维，再算个softmax得到每个Expert的权重，可以增加多层网络实验对比</li>
+<li>Expert<br>
+简单的基层全连接网络，relu激活，每个Expert独立权重</li>
+</ul>
+<h2 id="toc_h2_3">三、代码实现：</h2>
+<h3 id="toc_h3_4">1. MMOE layer</h3>
+<pre><code>import tensorflow as tf
+from tensorflow.keras import backend as K
+from tensorflow.keras import activations, initializers, regularizers, constraints
+from tensorflow.keras.layers import Layer, InputSpec
+
+
+class MMoE(Layer):
+    """
+    Multi-gate Mixture-of-Experts model.
+    """
+
+    def __init__(self,
+                 units,
+                 num_experts,
+                 num_tasks,
+                 use_expert_bias=True,
+                 use_gate_bias=True,
+                 expert_activation='relu',
+                 gate_activation='softmax',
+                 expert_bias_initializer='zeros',
+                 gate_bias_initializer='zeros',
+                 expert_bias_regularizer=None,
+                 gate_bias_regularizer=None,
+                 expert_bias_constraint=None,
+                 gate_bias_constraint=None,
+                 expert_kernel_initializer='VarianceScaling',
+                 gate_kernel_initializer='VarianceScaling',
+                 expert_kernel_regularizer=None,
+                 gate_kernel_regularizer=None,
+                 expert_kernel_constraint=None,
+                 gate_kernel_constraint=None,
+                 activity_regularizer=None,
+                 **kwargs):
+        """
+         Method for instantiating MMoE layer.
+
+        :param units: Number of hidden units
+        :param num_experts: Number of experts
+        :param num_tasks: Number of tasks
+        :param use_expert_bias: Boolean to indicate the usage of bias in the expert weights
+        :param use_gate_bias: Boolean to indicate the usage of bias in the gate weights
+        :param expert_activation: Activation function of the expert weights
+        :param gate_activation: Activation function of the gate weights
+        :param expert_bias_initializer: Initializer for the expert bias
+        :param gate_bias_initializer: Initializer for the gate bias
+        :param expert_bias_regularizer: Regularizer for the expert bias
+        :param gate_bias_regularizer: Regularizer for the gate bias
+        :param expert_bias_constraint: Constraint for the expert bias
+        :param gate_bias_constraint: Constraint for the gate bias
+        :param expert_kernel_initializer: Initializer for the expert weights
+        :param gate_kernel_initializer: Initializer for the gate weights
+        :param expert_kernel_regularizer: Regularizer for the expert weights
+        :param gate_kernel_regularizer: Regularizer for the gate weights
+        :param expert_kernel_constraint: Constraint for the expert weights
+        :param gate_kernel_constraint: Constraint for the gate weights
+        :param activity_regularizer: Regularizer for the activity
+        :param kwargs: Additional keyword arguments for the Layer class
+        """
+        # Hidden nodes parameter
+        self.units = units
+        self.num_experts = num_experts
+        self.num_tasks = num_tasks
+
+        # Weight parameter
+        self.expert_kernels = None
+        self.gate_kernels = None
+        self.expert_kernel_initializer = initializers.get(expert_kernel_initializer)
+        self.gate_kernel_initializer = initializers.get(gate_kernel_initializer)
+        self.expert_kernel_regularizer = regularizers.get(expert_kernel_regularizer)
+        self.gate_kernel_regularizer = regularizers.get(gate_kernel_regularizer)
+        self.expert_kernel_constraint = constraints.get(expert_kernel_constraint)
+        self.gate_kernel_constraint = constraints.get(gate_kernel_constraint)
+
+        # Activation parameter
+        self.expert_activation = activations.get(expert_activation)
+        self.gate_activation = activations.get(gate_activation)
+
+        # Bias parameter
+        self.expert_bias = None
+        self.gate_bias = None
+        self.use_expert_bias = use_expert_bias
+        self.use_gate_bias = use_gate_bias
+        self.expert_bias_initializer = initializers.get(expert_bias_initializer)
+        self.gate_bias_initializer = initializers.get(gate_bias_initializer)
+        self.expert_bias_regularizer = regularizers.get(expert_bias_regularizer)
+        self.gate_bias_regularizer = regularizers.get(gate_bias_regularizer)
+        self.expert_bias_constraint = constraints.get(expert_bias_constraint)
+        self.gate_bias_constraint = constraints.get(gate_bias_constraint)
+
+        # Activity parameter
+        self.activity_regularizer = regularizers.get(activity_regularizer)
+
+        # Keras parameter
+        self.input_spec = InputSpec(min_ndim=2)
+        self.supports_masking = True
+
+        super(MMoE, self).__init__(**kwargs)
+
+    def build(self, input_shape):
+        """
+        Method for creating the layer weights.
+
+        :param input_shape: Keras tensor (future input to layer)
+                            or list/tuple of Keras tensors to reference
+                            for weight shape computations
+        """
+        assert input_shape is not None and len(input_shape) &gt;= 2
+
+        input_dimension = input_shape[-1]
+
+        # Initialize expert weights (number of input features * number of units per expert * number of experts)
+        self.expert_kernels = self.add_weight(
+            name='expert_kernel',
+            shape=(input_dimension, self.units, self.num_experts),
+            initializer=self.expert_kernel_initializer,
+            regularizer=self.expert_kernel_regularizer,
+            constraint=self.expert_kernel_constraint,
+        )
+
+        # Initialize expert bias (number of units per expert * number of experts)
+        if self.use_expert_bias:
+            self.expert_bias = self.add_weight(
+                name='expert_bias',
+                shape=(self.units, self.num_experts),
+                initializer=self.expert_bias_initializer,
+                regularizer=self.expert_bias_regularizer,
+                constraint=self.expert_bias_constraint,
+            )
+
+        # Initialize gate weights (number of input features * number of experts * number of tasks)
+        self.gate_kernels = [self.add_weight(
+            name='gate_kernel_task_{}'.format(i),
+            shape=(input_dimension, self.num_experts),
+            initializer=self.gate_kernel_initializer,
+            regularizer=self.gate_kernel_regularizer,
+            constraint=self.gate_kernel_constraint
+        ) for i in range(self.num_tasks)]
+
+        # Initialize gate bias (number of experts * number of tasks)
+        if self.use_gate_bias:
+            self.gate_bias = [self.add_weight(
+                name='gate_bias_task_{}'.format(i),
+                shape=(self.num_experts,),
+                initializer=self.gate_bias_initializer,
+                regularizer=self.gate_bias_regularizer,
+                constraint=self.gate_bias_constraint
+            ) for i in range(self.num_tasks)]
+
+        self.input_spec = InputSpec(min_ndim=2, axes={-1: input_dimension})
+
+        super(MMoE, self).build(input_shape)
+
+    def call(self, inputs, **kwargs):
+        """
+        Method for the forward function of the layer.
+
+        :param inputs: Input tensor
+        :param kwargs: Additional keyword arguments for the base method
+        :return: A tensor
+        """
+        gate_outputs = []
+        final_outputs = []
+
+        # f_{i}(x) = activation(W_{i} * x + b), where activation is ReLU according to the paper
+        expert_outputs = tf.tensordot(a=inputs, b=self.expert_kernels, axes=1)
+        # Add the bias term to the expert weights if necessary
+        if self.use_expert_bias:
+            expert_outputs = K.bias_add(x=expert_outputs, bias=self.expert_bias)
+        expert_outputs = self.expert_activation(expert_outputs)
+
+        # g^{k}(x) = activation(W_{gk} * x + b), where activation is softmax according to the paper
+        for index, gate_kernel in enumerate(self.gate_kernels):
+            gate_output = K.dot(x=inputs, y=gate_kernel)
+            # Add the bias term to the gate weights if necessary
+            if self.use_gate_bias:
+                gate_output = K.bias_add(x=gate_output, bias=self.gate_bias[index])
+            gate_output = self.gate_activation(gate_output)
+            gate_outputs.append(gate_output)
+
+        # f^{k}(x) = sum_{i=1}^{n}(g^{k}(x)_{i} * f_{i}(x))
+        for gate_output in gate_outputs:
+            expanded_gate_output = K.expand_dims(gate_output, axis=1)
+            weighted_expert_output = expert_outputs * K.repeat_elements(expanded_gate_output, self.units, axis=1)
+            final_outputs.append(K.sum(weighted_expert_output, axis=2))
+
+        return final_outputs
+
+    def compute_output_shape(self, input_shape):
+        """
+        Method for computing the output shape of the MMoE layer.
+
+        :param input_shape: Shape tuple (tuple of integers)
+        :return: List of input shape tuple where the size of the list is equal to the number of tasks
+        """
+        assert input_shape is not None and len(input_shape) &gt;= 2
+
+        output_shape = list(input_shape)
+        output_shape[-1] = self.units
+        output_shape = tuple(output_shape)
+
+        return [output_shape for _ in range(self.num_tasks)]
+
+    def get_config(self):
+        """
+        Method for returning the configuration of the MMoE layer.
+
+        :return: Config dictionary
+        """
+        config = {
+            'units': self.units,
+            'num_experts': self.num_experts,
+            'num_tasks': self.num_tasks,
+            'use_expert_bias': self.use_expert_bias,
+            'use_gate_bias': self.use_gate_bias,
+            'expert_activation': activations.serialize(self.expert_activation),
+            'gate_activation': activations.serialize(self.gate_activation),
+            'expert_bias_initializer': initializers.serialize(self.expert_bias_initializer),
+            'gate_bias_initializer': initializers.serialize(self.gate_bias_initializer),
+            'expert_bias_regularizer': regularizers.serialize(self.expert_bias_regularizer),
+            'gate_bias_regularizer': regularizers.serialize(self.gate_bias_regularizer),
+            'expert_bias_constraint': constraints.serialize(self.expert_bias_constraint),
+            'gate_bias_constraint': constraints.serialize(self.gate_bias_constraint),
+            'expert_kernel_initializer': initializers.serialize(self.expert_kernel_initializer),
+            'gate_kernel_initializer': initializers.serialize(self.gate_kernel_initializer),
+            'expert_kernel_regularizer': regularizers.serialize(self.expert_kernel_regularizer),
+            'gate_kernel_regularizer': regularizers.serialize(self.gate_kernel_regularizer),
+            'expert_kernel_constraint': constraints.serialize(self.expert_kernel_constraint),
+            'gate_kernel_constraint': constraints.serialize(self.gate_kernel_constraint),
+            'activity_regularizer': regularizers.serialize(self.activity_regularizer)
+        }
+        base_config = super(MMoE, self).get_config()
+
+        return dict(list(base_config.items()) + list(config.items()))
+
+</code></pre>
+<h3 id="toc_h3_5">2. mmoe with task tower:</h3>
+<p>构建多目标模型的话就是在mmoe layer的基础上，增加不同task tower，NN网络</p>
+<pre><code>    # Set up the input layer
+    input_layer = Input(shape=(num_features,))
+
+    # Set up MMoE layer
+    mmoe_layers = MMoE(
+        units=4,
+        num_experts=3,
+        num_tasks=2
+    )(input_layer)
+
+    output_layers = []
+
+    # Build tower layer from MMoE layer
+    for index, task_layer in enumerate(mmoe_layers):
+        tower_layer = Dense(
+            units=8,
+            activation='relu',
+            kernel_initializer=VarianceScaling())(task_layer)
+        output_layer = Dense(
+            units=output_info[index][0],
+            name=output_info[index][1],
+            activation='softmax',
+            kernel_initializer=VarianceScaling())(tower_layer)
+        output_layers.append(output_layer)
+
+    # Compile model
+    model = Model(inputs=[input_layer], outputs=output_layers)
+    adam_optimizer = Adam()
+    model.compile(
+        loss={'income': 'binary_crossentropy', 'marital': 'binary_crossentropy'},
+        optimizer=adam_optimizer,
+        metrics=['accuracy', tf.keras.metrics.AUC(curve='ROC'), tf.keras.metrics.AUC(curve='PR')]
+    )
+
+    # Print out model architecture summary
+    model.summary()
+</code></pre>
+<p>‍</p>
+<p>参考：</p>
+<p><a href="https://www.showmeai.tech/article-detail/60" target="_blank">大厂技术实现 | 多目标优化及应用（含代码实现）@推荐与计算广告系列 (showmeai.tech)</a></p>
+<p><a href="https://dl.acm.org/doi/pdf/10.1145/3219819.3220007" target="_blank">Modeling Task Relationships in Multi-task Learning with Multi-gate Mixture-of-Experts (acm.org)</a></p>
+<p><a href="https://github.com/drawbridge/keras-mmoe" target="_blank">drawbridge/keras-mmoe: A TensorFlow Keras implementation of "Modeling Task Relationships in Multi-task Learning with Multi-gate Mixture-of-Experts" (KDD 2018) (github.com)</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/347856746" target="_blank">MMOE 多任务学习模型介绍与源码浅析 - 知乎 (zhihu.com)</a></p>
+<p>‍</p>
+                    <div>
+                        <hr>
+
+标题：【推荐】多目标排序以及MMOE原理解析<br>
+作者：<a href="https://jditlee.github.io" target="_blank">凌陨心</a><br>
+地址：<a href="https://jditlee.github.io/articles/2023/05/25/1685011984247.html" target="_blank">https://jditlee.github.io/articles/2023/05/25/1685011984247.html</a><br>
+
+<!-- 签名档内可使用 HTML、JavaScript -->
+<br>
+                    </div>
+            </section>
+        </div>
+
+    </div>
+        <div class="post__toc">
+<ul class="article__toc">
+        <li class="toc__h1">
+            <a href="#toc_h1_0">【推荐】多目标排序以及MMOE原理解析</a>
+        </li>
+        <li class="toc__h2">
+            <a href="#toc_h2_1">一、多目标排序简介</a>
+        </li>
+        <li class="toc__h2">
+            <a href="#toc_h2_2">二、MMOE的网络结构</a>
+        </li>
+        <li class="toc__h2">
+            <a href="#toc_h2_3">三、代码实现：</a>
+        </li>
+        <li class="toc__h3">
+            <a href="#toc_h3_4">1. MMOE layer</a>
+        </li>
+        <li class="toc__h3">
+            <a href="#toc_h3_5">2. mmoe with task tower:</a>
+        </li>
+</ul>        </div>
+        <div class="wrapper">
+            <div id="gitalk-container"></div>
+            <div id="vcomment"
+                 style="    margin-bottom: 40px; margin-top: 80px;
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 5px;
+        background: rgba(255,255,255,0.9);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        padding: 20px;"
+                 data-name="jditlee" data-postId="1685011984247"></div>
+            <div id="b3logsolocomments"></div>
+        </div>
+    <div class="article__bottom">
+        <div class="wrapper">
+            <div class="fn__flex">
+                <div class="item" id="randomArticles"></div>
+                <div class="item" id="relevantArticles"></div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<script type="text/javascript"
+        src="https://jditlee.github.io/skins/Bubble/js/TweenMax.min.js?1679484362319"
+        charset="utf-8"></script>
+<footer class="footer">
+    <div class="wrapper">
+            <a href="https://ld246.com/member/jditlee"
+       title="https://ld246.com/member/jditlee"
+       class="user__site"
+       target="_blank" rel="noopener nofollow">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path fill="#d23f31" style="fill: var(--color1, #d23f31)" d="M5.787 17.226h17.033l5.954 9.528c0.47 0.752 0.003 1.361-1.042 1.361h-15.141z"></path>
+            <path d="M10.74 3.927h17.033c1.045 0 1.512 0.609 1.042 1.361l-5.954 9.528h-19.872l6.379-10.209c0.235-0.376 0.849-0.681 1.372-0.681z"></path>
+            <path d="M2.953 17.226h2.839l6.804 10.889h-1.892c-0.523 0-1.137-0.305-1.372-0.681z"></path>
+        </svg>
+    </a>
+
+        <a href="https://github.com/jditlee"
+           title="https://github.com/jditlee"
+           class="user__site"
+           target="_blank" rel="noopener nofollow">
+            <svg viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M16 0.331c-8.836 0-16 7.163-16 16 0 7.069 4.585 13.067 10.942 15.182 0.8 0.148 1.094-0.347 1.094-0.77 0-0.381-0.015-1.642-0.022-2.979-4.452 0.968-5.391-1.888-5.391-1.888-0.728-1.849-1.776-2.341-1.776-2.341-1.452-0.993 0.11-0.973 0.11-0.973 1.606 0.113 2.452 1.649 2.452 1.649 1.427 2.446 3.743 1.739 4.656 1.33 0.143-1.034 0.558-1.74 1.016-2.14-3.554-0.404-7.29-1.777-7.29-7.907 0-1.747 0.625-3.174 1.649-4.295-0.166-0.403-0.714-2.030 0.155-4.234 0 0 1.344-0.43 4.401 1.64 1.276-0.355 2.645-0.532 4.005-0.539 1.359 0.006 2.729 0.184 4.008 0.539 3.054-2.070 4.395-1.64 4.395-1.64 0.871 2.204 0.323 3.831 0.157 4.234 1.026 1.12 1.647 2.548 1.647 4.295 0 6.145-3.743 7.498-7.306 7.895 0.574 0.497 1.085 1.47 1.085 2.963 0 2.141-0.019 3.864-0.019 4.391 0 0.426 0.288 0.925 1.099 0.768 6.354-2.118 10.933-8.113 10.933-15.18 0-8.837-7.164-16-16-16z"></path>
+            </svg>
+        </a>
+
+        <a href="https://twitter.com/neptune_520"
+           title="https://twitter.com/neptune_520"
+           target="_blank"
+           class="user__site" rel="noopener nofollow">
+            <svg viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M32.003 6.075c-1.175 0.525-2.444 0.875-3.769 1.031 1.356-0.813 2.394-2.1 2.887-3.631-1.269 0.75-2.675 1.3-4.169 1.594-1.2-1.275-2.906-2.069-4.794-2.069-3.625 0-6.563 2.938-6.563 6.563 0 0.512 0.056 1.012 0.169 1.494-5.456-0.275-10.294-2.888-13.531-6.862-0.563 0.969-0.887 2.1-0.887 3.3 0 2.275 1.156 4.287 2.919 5.463-1.075-0.031-2.087-0.331-2.975-0.819 0 0.025 0 0.056 0 0.081 0 3.181 2.263 5.838 5.269 6.437-0.55 0.15-1.131 0.231-1.731 0.231-0.425 0-0.831-0.044-1.237-0.119 0.838 2.606 3.263 4.506 6.131 4.563-2.25 1.762-5.075 2.813-8.156 2.813-0.531 0-1.050-0.031-1.569-0.094 2.913 1.869 6.362 2.95 10.069 2.95 12.075 0 18.681-10.006 18.681-18.681 0-0.287-0.006-0.569-0.019-0.85 1.281-0.919 2.394-2.075 3.275-3.394z"></path>
+            </svg>
+        </a>
+        <a href="javascript:void(0)"
+           class="user__site" title="LH26706991">
+            <svg viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M9.062 9.203c0-0.859-0.562-1.422-1.422-1.422-0.844 0-1.703 0.562-1.703 1.422 0 0.844 0.859 1.406 1.703 1.406 0.859 0 1.422-0.562 1.422-1.406zM20.672 17.125c0-0.562-0.562-1.125-1.422-1.125-0.562 0-1.125 0.562-1.125 1.125 0 0.578 0.562 1.141 1.125 1.141 0.859 0 1.422-0.562 1.422-1.141zM16.984 9.203c0-0.859-0.562-1.422-1.406-1.422-0.859 0-1.703 0.562-1.703 1.422 0 0.844 0.844 1.406 1.703 1.406 0.844 0 1.406-0.562 1.406-1.406zM26.906 17.125c0-0.562-0.578-1.125-1.422-1.125-0.562 0-1.125 0.562-1.125 1.125 0 0.578 0.562 1.141 1.125 1.141 0.844 0 1.422-0.562 1.422-1.141zM22.75 10.922c-0.359-0.047-0.719-0.063-1.094-0.063-5.375 0-9.625 4.016-9.625 8.953 0 0.828 0.125 1.625 0.359 2.375-0.359 0.031-0.703 0.047-1.063 0.047-1.422 0-2.547-0.281-3.969-0.562l-3.953 1.984 1.125-3.406c-2.828-1.984-4.531-4.547-4.531-7.656 0-5.391 5.094-9.625 11.328-9.625 5.563 0 10.453 3.391 11.422 7.953zM32 19.687c0 2.547-1.688 4.813-3.969 6.516l0.859 2.828-3.109-1.703c-1.141 0.281-2.281 0.578-3.406 0.578-5.391 0-9.625-3.688-9.625-8.219s4.234-8.219 9.625-8.219c5.094 0 9.625 3.688 9.625 8.219z"></path>
+            </svg>
+        </a>
+ <br>
+        &copy; 2023
+        <a href="https://jditlee.github.io">Neptune</a>
+        <script>
+  document.addEventListener("DOMContentLoaded", function (event) {
+    if (Label.articleId) {
+      const gitalk = new Gitalk({
+        clientID: 'b6e62888318fa14f6c4b',
+        clientSecret: 'afa5679e9065e72becf40c8c91ea4abe851f9168',
+        repo: 'solo-blog',
+        owner: 'jditlee',
+        admin: ['jditlee'],
+        id: Label.articleId,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  })
+</script>
+
+<a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2023020070号</a>
+        <span class="footer__heart">❤️</span>
+    </div>
+</footer>
+<svg class="side__top" id="sideTop" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    <path d="M26.562 13.958c0 0.72 0.583 1.303 1.303 1.303s1.303-0.583 1.303-1.303v0c0-0.72-0.583-1.303-1.303-1.303s-1.303 0.583-1.303 1.303v0zM23.305 10.7c0 0 0 0 0 0 0 0.72 0.583 1.303 1.303 1.303s1.303-0.583 1.303-1.303c0-0 0-0 0-0v0c0-0 0-0 0-0 0-0.72-0.583-1.303-1.303-1.303s-1.303 0.583-1.303 1.303c0 0 0 0 0 0v0zM20.022 7.417c0 0 0 0 0 0 0 0.72 0.583 1.303 1.303 1.303s1.303-0.583 1.303-1.303c0-0 0-0 0-0v0c0-0 0-0 0-0 0-0.72-0.583-1.303-1.303-1.303s-1.303 0.583-1.303 1.303c0 0 0 0 0 0v0zM29.67 0h-27.339c-0.677 0-1.228 0.551-1.228 1.228s0.551 1.228 1.228 1.228h11.151l-10.725 10.725c-0.476 0.476-0.476 1.253 0 1.729 0.226 0.226 0.551 0.351 0.852 0.351s0.626-0.125 0.852-0.351l10.074-10.074v25.936c0 0.677 0.551 1.228 1.228 1.228s1.228-0.551 1.228-1.228v-26.011c0.476 0.426 1.203 0.426 1.679-0.050s0.476-1.253 0-1.729l-0.576-0.576h11.577c0.677 0 1.228-0.551 1.228-1.228 0-0.626-0.551-1.178-1.228-1.178z"></path>
+</svg>
+<script>
+  var Label = {
+    speech: true,
+    servePath: "https://jditlee.github.io",
+    staticServePath: "https://jditlee.github.io",
+    luteAvailable: false,
+    hljsStyle: 'github',
+    langLabel: "zh_CN",
+    version: "4.4.0",
+    staticSite: true,
+    showCodeBlockLn: true,
+    articleId: "1685011984247",
+  }
+</script>
+<script type="text/javascript"
+        src="https://jditlee.github.io/skins/Bubble/js/common.min.js?1679484362319"
+        charset="utf-8"></script>
+<script type="text/javascript"
+        src="https://jditlee.github.io/skins/Bubble/js/circleMagic.min.js?1679484362319"
+        charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/kanbanniang@0.2.12/index.css"/>
+<script async src="https://unpkg.com/kanbanniang@0.2.12/index.js"></script>
+<div class="solo-kanbanniang">
+    <div class="solo-kanbanniang__tip"></div>
+    <canvas id="soloKanbanniang" width="280" height="250"></canvas>
+    <div class="solo-kanbanniang__tool">
+        <svg id="soloKanbanniangHome" viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M32 18.967l-16-12.42-16 12.42v-5.064l16-12.42 16 12.42zM28 18.516v12h-8v-8h-8v8h-8v-12l12-9z"></path>
+        </svg>
+        <svg id="soloKanbanniangRSS" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M320.364 768q0 45.728-32 77.728t-77.728 32-77.728-32-32-77.728 32-77.728 77.728-32 77.728 32 32 77.728zM612.94 838.272q1.152 16-9.728 27.424-10.272 12-26.848 12h-77.152q-14.272 0-24.576-9.44t-11.424-23.712q-12.576-130.848-105.44-223.712t-223.712-105.44q-14.272-1.152-23.712-11.424t-9.44-24.576V402.24q0-16.576 12-26.848 9.728-9.728 24.576-9.728h2.848q91.424 7.424 174.848 46.016t148 103.712q65.152 64.576 103.712 148t46.016 174.848z m292.576 1.152q1.152 15.424-10.272 26.848-10.272 11.424-26.272 11.424h-81.728q-14.848 0-25.44-10.016t-11.136-24.288q-6.848-122.848-57.728-233.44t-132.288-192-192-132.288-233.44-58.272q-14.272-0.576-24.288-11.136t-10.016-24.864V109.664q0-16 11.424-26.272 10.272-10.272 25.152-10.272h1.728q149.728 7.424 286.56 68.576t243.136 168q106.848 106.272 168 243.136t68.576 286.56z"></path>
+        </svg>
+        <svg id="soloKanbanniangChat" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M802.42709 96.163153H219.476155c-84.48109 0-154.896836 71.746044-154.896836 157.840888v393.119449c0 86.072331 70.415746 157.819398 154.896836 157.819399h214.038818V925.470963s22.526039 40.168862 64.767096 5.734608c30.965246-25.819039 126.721123-91.828428 171.775248-123.385145h132.369773c84.502579 0 154.896836-83.21526 154.896836-157.839865V251.125481c0-86.094844-70.394257-154.962328-154.896836-154.962328zM301.144176 518.002714c-39.427988 0-70.416769-31.576159-70.416769-71.746044 0-40.168862 30.988782-71.746044 70.416769-71.746044 39.426965 0 70.393233 31.577183 70.393234 71.746044 0 40.169885-30.966269 71.746044-70.393234 71.746044z m208.411657 0c-39.450501 0-70.415746-31.576159-70.415746-71.746044 0-40.168862 30.965246-71.746044 70.415746-71.746044 39.405475 0 70.394257 31.577183 70.394257 71.746044 0 40.169885-30.988782 71.746044-70.394257 71.746044z m211.203236 0c-39.426965 0-70.416769-31.576159-70.416769-71.746044 0-40.168862 30.988782-71.746044 70.416769-71.746044s70.415746 31.577183 70.415746 71.746044c-0.001023 40.169885-30.988782 71.746044-70.415746 71.746044z"></path>
+        </svg>
+        <svg id="soloKanbanniangChange" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M936.672 193.216l-226.88-64c-8.704-2.528-18.112-1.12-25.824 3.776-7.68 4.864-12.896 12.736-14.432 21.728C655.712 236.928 595.328 288 512 288c-71.424 0-142.464-103.296-163.776-143.104-7.136-13.28-22.528-19.84-37.024-15.68l-224 64C73.472 197.152 64 209.728 64 224v256a31.93 31.93 0 0 0 11.712 24.736c7.392 6.08 17.152 8.512 26.56 6.624L224 487.04V832c0 52.928 43.072 96 96 96h384c52.928 0 96-43.072 96-96V519.04l121.728 24.352c9.44 1.92 19.2-0.544 26.56-6.624C955.68 530.656 960 521.6 960 512V224c0-14.336-9.536-26.912-23.328-30.784zM672 800H352c-17.664 0-32-14.304-32-32s14.336-32 32-32h320c17.696 0 32 14.304 32 32s-14.304 32-32 32z"></path>
+        </svg>
+        <svg id="soloKanbanniangPhoto" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M898.048 258.048q23.552-1.024 46.592 9.216t40.96 27.136 28.672 39.424 10.752 46.08l0 390.144q0 24.576-10.752 47.104t-28.672 40.448-40.96 28.16-47.616 10.24l-697.344 0q-24.576 0-48.64-10.24t-42.496-27.648-29.696-40.448-11.264-48.64l0-381.952q0-22.528 10.752-45.568t28.672-41.472 39.936-30.208 44.544-11.776l63.488 0 13.312-83.968q3.072-20.48 18.432-32.768t34.816-12.288l456.704 0q19.456 0 34.304 10.752t16.896 34.304l14.336 83.968 54.272 0zM548.864 712.704q40.96 0 77.824-15.872t63.488-42.496 42.496-62.976 15.872-77.312-15.872-77.312-42.496-62.976-63.488-42.496-77.824-15.872-77.312 15.872-63.488 42.496-43.008 62.976-15.872 77.312 15.872 77.312 43.008 62.976 63.488 42.496 77.312 15.872z"></path>
+        </svg>
+        <svg id="soloKanbanniangGithub" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M1024 524.8c0 114.346667-32.554667 217.216-97.706667 308.565333-65.066667 91.306667-149.162667 154.538667-252.288 189.610667-11.989333 2.304-20.778667 0.682667-26.325333-4.778667a27.605333 27.605333 0 0 1-8.362667-20.48v-144.213333c0-44.16-11.52-76.501333-34.645333-97.024 25.344-2.730667 48.085333-6.826667 68.309333-12.288a268.629333 268.629333 0 0 0 62.72-26.666667 187.434667 187.434667 0 0 0 53.973334-45.44c14.421333-18.005333 26.197333-41.898667 35.328-71.765333 9.088-29.824 13.653333-64.128 13.653333-102.826667 0-55.125333-17.536-102.058667-52.650667-140.8 16.426667-41.429333 14.677333-87.893333-5.333333-139.392-12.458667-4.096-30.464-1.578667-54.016 7.509334a355.328 355.328 0 0 0-61.312 30.08L640 271.274667a462.336 462.336 0 0 0-128-17.749334c-43.989333 0-86.656 5.930667-128 17.749334a589.824 589.824 0 0 0-28.330667-18.432c-11.776-7.253333-30.336-16.042667-55.68-26.325334-25.344-10.24-44.416-13.312-57.301333-9.216-19.584 51.498667-21.12 97.962667-4.693333 139.434667-35.114667 38.698667-52.650667 85.632-52.650667 140.757333 0 38.698667 4.565333 72.874667 13.653333 102.485334 9.130667 29.610667 20.778667 53.546667 34.986667 71.765333 14.250667 18.218667 32.128 33.493333 53.674667 45.781333 21.546667 12.288 42.453333 21.205333 62.677333 26.666667 20.224 5.461333 43.008 9.557333 68.309333 12.288-17.749333 16.384-28.629333 39.850667-32.64 70.4a130.005333 130.005333 0 0 1-29.994666 10.24c-10.666667 2.261333-23.338667 3.413333-37.973334 3.413333-14.72 0-29.269333-4.906667-43.690666-14.677333-14.464-9.813333-26.794667-24.064-36.992-42.709333a109.226667 109.226667 0 0 0-32.341334-35.541334c-13.141333-9.130667-24.106667-14.592-33.024-16.426666l-13.312-2.048c-9.344 0-15.786667 1.024-19.328 3.072-3.584 2.090667-4.693333 4.693333-3.328 7.893333 1.28 3.157333 3.328 6.4 5.973334 9.557333 2.688 3.2 5.546667 5.930667 8.661333 8.192l4.693333 3.413334c9.770667 4.565333 19.413333 13.226667 29.013334 25.984 9.514667 12.757333 16.512 24.362667 20.992 34.858666l6.656 15.701334c5.76 17.322667 15.530667 31.317333 29.312 42.026666 13.781333 10.666667 28.672 17.536 44.672 20.48 16 2.986667 31.445333 4.565333 46.336 4.821334 14.890667 0.213333 27.221333-0.597333 36.992-2.389334l15.36-2.730666c0 17.28 0.085333 37.546667 0.298666 60.8l0.341334 36.906666a27.050667 27.050667 0 0 1-8.661334 20.48c-5.76 5.461333-14.677333 7.082667-26.666666 4.778667-103.125333-35.072-187.221333-98.261333-252.330667-189.610667C32.554667 742.058667 0 639.146667 0 524.8c0-95.232 22.869333-183.04 68.693333-263.466667A516.266667 516.266667 0 0 1 254.976 70.4C333.44 23.466667 419.114667 0 512 0c92.885333 0 178.56 23.466667 256.981333 70.4a516.266667 516.266667 0 0 1 186.368 190.976C1001.130667 341.802667 1024 429.653333 1024 524.842667z"></path>
+        </svg>
+        <svg id="soloKanbanniangClose" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M517.572566143763 1018.6748601482986C238.26554897656422 1018.6748601482986 11.897910175114305 792.2714997690043 11.897910175114305 513.0002041796496c0-279.3070171671984 226.36763880144977-505.71037754649296 505.6746559686481-505.71037754649296 279.2712955893538 0 505.6746559686481 226.40336037929444 505.6746559686481 505.71037754649296C1023.2472221124112 792.2714997690043 796.8795833109612 1018.6748601482986 517.572566143763 1018.6748601482986zM754.7281214542927 339.25044954334646c13.752807470184345-13.752807470184345 9.680547595895998-40.186775075214015-9.073280772537204-58.94060344364717l-2.143294670678079-2.1075730928334457c-18.7538283684332-18.7538283684332-45.15207439561819-22.861809820566194-58.90488186580257-9.073280772537204l-168.21291007038468 168.24863164822932-180.42968969324974-180.46541127109438c-13.967136937252159-13.967136937252159-40.72259874288353-9.823433907274534-59.72647815622916 9.216167083915742l-2.143294670678079 2.143294670678079c-19.039600991190277 19.003879413345654-23.111860865478626 45.75934121897699-9.180445506071107 59.655035000539876l180.42968969324974 180.46541127109438-176.07165719620428 176.03593561835962c-13.788529048028984 13.824250625873615-9.716269173740633 40.151053497369375 9.073280772537204 58.94060344364717l2.1075730928334457 2.1075730928334457c18.7538283684332 18.7538283684332 45.15207439561819 22.897531398410823 58.90488186580257 9.073280772537204l176.10737877404887-176.10737877404887 170.39192631890742 170.42764789675192c13.967136937252159 13.931415359407513 40.686877165038865 9.85915548511917 59.690756578384516-9.180445506071107l2.1790162485227142-2.1790162485227142c19.039600991190277-18.968157835501014 23.147582443323273-45.72361964113239 9.180445506071107-59.690756578384516l-170.39192631890742-170.42764789675192L754.7281214542927 339.25044954334646z"></path>
+        </svg>
+    </div>
+</div>
+
+    <svg viewBox="0 0 32 32" width="100%" height="100%" class="side__top side__top--toc">
+        <path d="M30 18h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM30 6.25h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM2 25.75h28c1.1 0 2 0.9 2 2s-0.9 2-2 2h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2z"></path>
+    </svg>
+
+<script type="text/javascript">
+    Util.addScript('https://jditlee.github.io/js/page.min.js?1679484362319', 'soloPageScript')
+    var page = new Page({
+        "commentContentCannotEmptyLabel": "评论不能为空",
+        "oId": "1685011984247",
+        "blogHost": "https://jditlee.github.io",
+        "randomArticles1Label": "随机阅读：",
+        "externalRelevantArticles1Label": "站外相关阅读："
+    });
+    $(document).ready(function () {
+        page.load();
+    page.tips.externalRelevantArticlesDisplayCount = "0";
+        page.loadRandomArticles('<h3>随机阅读</h3>');
+        page.loadRelevantArticles('1685011984247', '<h3>相关阅读</h3>');
+    Skin.initArticle()
+    });
+</script>
+
+</body>
+</html>
+
+<!-- Generated by Latke (https://github.com/88250/latke) in 18ms, 2023/06/07 15:25:34 -->

@@ -1,0 +1,42 @@
+{
+    "orientation": "portrait",
+    "theme_color": "#1fb5ad",
+    "background_color": "#f1f2f7",
+    "display": "standalone",
+    "name": "Neptune",
+    "start_url": ".",
+    "description": "Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. ",
+    "short_name": "Neptune",
+    "icons": [
+        {
+            "sizes": "48x48",
+            "src": "images/logo/logo@48.png",
+            "type": "image/png"
+        },
+        {
+            "sizes": "72x72",
+            "src": "images/logo/logo@72.png",
+            "type": "image/png"
+        },
+        {
+            "sizes": "96x96",
+            "src": "images/logo/logo@96.png",
+            "type": "image/png"
+        },
+        {
+            "sizes": "144x144",
+            "src": "images/logo/logo@144.png",
+            "type": "image/png"
+        },
+        {
+            "sizes": "192x192",
+            "src": "images/logo/logo@192.png",
+            "type": "image/png"
+        },
+        {
+            "sizes": "512x512",
+            "src": "images/logo/logo@512.png",
+            "type": "image/png"
+        }
+    ]
+}

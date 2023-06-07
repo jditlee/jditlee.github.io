@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><meta name="theme-color" content="#3b3e43"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=no"/><title>NLP - Neptune</title><meta name="description" content="Neptune个人网站,主要发布推荐算法系列文章,包括召回,排序所涉及的算法模型,同时也会记录一些nlp相关的技术,没事发发牢骚,非严谨技术博客,非文学瞎写博客,追寻自由,Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. "/><meta property="og:description" content="Neptune个人网站,主要发布推荐算法系列文章,包括召回,排序所涉及的算法模型,同时也会记录一些nlp相关的技术,没事发发牢骚,非严谨技术博客,非文学瞎写博客,追寻自由,Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. "/>    <meta name="keywords" content="python,推荐算法,机器学习,深度学习,Solo,博客,闲谈,杂思,neptune,召回,排序,算法,凌陨心"/><link rel="dns-prefetch" href="https://jditlee.github.io"/><link rel="dns-prefetch" href="https://unpkg.com"/><link rel="preconnect" href="https://jditlee.github.io"><link rel="icon" type="image/png" href="https://b3log.org/images/brand/solo-128.png"/><link rel="apple-touch-icon" href="https://b3log.org/images/brand/solo-128.png"><link rel="shortcut icon" type="image/x-icon" href="https://b3log.org/images/brand/solo-128.png"><meta name="copyright" content="B3log"/><meta http-equiv="Window-target" content="_top"/><meta property="og:locale" content="zh_CN"/><meta property="og:title" content="NLP - Neptune"/><meta property="og:site_name" content="Neptune"/><meta property="og:url"      content="https://jditlee.github.io/category/nlp?p=1"/><meta property="og:image" content="https://b3log.org/images/brand/solo-128.png"/><link rel="search" type="application/opensearchdescription+xml" title="NLP - Neptune" href="/opensearch.xml"><link href="https://jditlee.github.io/rss.xml" title="RSS" type="application/rss+xml" rel="alternate"/><link rel="manifest" href="https://jditlee.github.io/manifest.json">            <link rel="canonical" href="https://jditlee.github.io/category/nlp">    <link rel="stylesheet" href="https://jditlee.github.io/skins/Bubble/css/base.css?1679484362319"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8b11e2d34ba7af67792b99d5d53aae3b";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script src="https://unpkg.com/vditor@3.8.15/dist/js/icons/ant.js" async="" id="vditorIconScript"></script></head>
+<body class="fn__flex-column">
+<div id="pjax" class="fn__flex-1">
+    
+    <progress class="fn__progress"></progress>
+    <header class="header header--index">
+        <div class="wrapper header__title">
+            <h1 class="header__h1 fn__flex-inline">
+                <a href="https://jditlee.github.io" rel="start">Neptune</a>
+            </h1>
+            <h2 class="header__desc header__desc--title">Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. </h2>
+            <div class="header__desc">
+                <!-- 公告栏可使用 HTML、JavaScript，比如可以在此加入第三方统计 js -->
+            </div>
+            <svg class="header__down" id="headerDown" viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M15.992 25.304c-0 0-0 0-0.001 0-0.516 0-0.981-0.216-1.31-0.563l-0.001-0.001-14.187-14.996c-0.306-0.323-0.494-0.76-0.494-1.241 0-0.998 0.809-1.807 1.807-1.807 0.517 0 0.983 0.217 1.313 0.565l0.001 0.001 12.875 13.612 12.886-13.612c0.331-0.348 0.797-0.565 1.314-0.565 0.481 0 0.918 0.187 1.242 0.493l-0.001-0.001c0.723 0.687 0.755 1.832 0.072 2.555l-14.201 14.996c-0.33 0.348-0.795 0.564-1.311 0.564-0.001 0-0.003 0-0.004 0h0z"></path>
+            </svg>
+        </div>
+    </header>
+    <div class="side__menu">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M30 18h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM30 6.25h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2h28c1.1 0 2 0.9 2 2s-0.9 2-2 2zM2 25.75h28c1.1 0 2 0.9 2 2s-0.9 2-2 2h-28c-1.1 0-2-0.9-2-2s0.9-2 2-2z"></path>
+        </svg>
+        <span>
+            &nbsp; menu
+        </span>
+    </div>
+    <div class="side__main">
+        <div class="side__bg"></div>
+        <div class="side__panel">
+            <svg class="side__close ft__a" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                 viewBox="0 0 20 20">
+                <path d="M18.362 19.324c-0.902 0.902-2.363 0.902-3.263 0l-5.098-5.827-5.098 5.825c-0.902 0.902-2.363 0.902-3.263 0-0.902-0.902-0.902-2.363 0-3.263l5.304-6.057-5.306-6.061c-0.902-0.902-0.902-2.361 0-3.263s2.361-0.902 3.263 0l5.1 5.829 5.098-5.829c0.902-0.902 2.361-0.902 3.263 0s0.902 2.363 0 3.263l-5.304 6.061 5.304 6.057c0.902 0.902 0.902 2.363 0 3.265z"></path>
+            </svg>
+
+            <div class="side__header">
+                <a href="https://jditlee.github.io" rel="start"><img class="side__logo" alt="Neptune" src="https://b3logfile.com/avatar/1538398651528_1677663103667.png?imageView2/1/w/128/h/128/interlace/0/q/100"></a>
+
+                <div class="side__meta">
+                    32 文章 <br>
+                    <span data-uvstaturl="https://jditlee.github.io">0</span> 浏览
+                    
+                </div>
+            </div>
+
+            <div class="side__title">
+                <span>ღゝ◡╹)ノ❤️</span>
+            </div>
+            <ul class="side__nav">
+                <li>
+                    <a href="https://jditlee.github.io" rel="start">
+                            首页
+                    </a>
+                </li>
+                    <li>
+                        <a href="/about" target="_self">关于</a>
+                    </li>
+                    <li>
+                        <a href="/mind" target="_self">碎碎念</a>
+                    </li>
+                    <li>
+                        <a href="/my-github-repos" target="_self"><img
+                                class="page-icon" src="/images/github-icon.png" alt="我的开源">我的开源</a>
+                    </li>
+                <li>
+                    <a href="https://jditlee.github.io/categories.html">分类</a>
+                </li>
+                <li>
+                    <a href="https://jditlee.github.io/tags.html">标签墙</a>
+                </li>
+                <li>
+                    <a href="https://jditlee.github.io/archives.html">存档</a>
+                </li>
+                <li>
+                    <a href="https://jditlee.github.io/links.html">友链</a>
+                </li>
+                <li>
+                    <a rel="alternate" href="https://jditlee.github.io/rss.xml">RSS</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="wrapper">
+        <h2 class="other__title"><a href="https://jditlee.github.io" class="ft__a">Neptune</a> - NLP</h2>
+        <div class="ft__center">
+            nlp相关文章
+        </div>
+<div class="articles">
+        <article class="item">
+            <h2 class="item__title">
+                <a rel="bookmark" href="https://jditlee.github.io/articles/2023/03/21/1679387244279.html">
+                    【NLP】pku词性标注集
+                </a>
+            </h2>
+            <a class="item__abstract" pjax-title="【NLP】pku词性标注集"
+               href="https://jditlee.github.io/articles/2023/03/21/1679387244279.html">
+                    序号词性名称帮助记忆的诠释备注例子及注解 1Ag形语素形容词性语素。形容词代码为a，语素代码ｇ前面置以A。绿色/n 似/d 锦/Ag ， 2a形容词取英语形容词a
+            </a>
+            <div class="fn__clear">
+                2023-03-21   &nbsp;·&nbsp;
+                <a href="https://jditlee.github.io/authors/1672398391564">jditlee</a>
+                &nbsp;·&nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/nlp">
+                        nlp
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/pku">
+                        pku
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/hanlp">
+                        hanlp
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/%E8%AF%8D%E6%80%A7%E6%A0%87%E6%B3%A8">
+                        词性标注
+                    </a> &nbsp;
+                    &nbsp;·&nbsp;
+                    <a class="item__tag" href="https://jditlee.github.io/articles/2023/03/21/1679387244279.html#b3logsolocomments">
+                        <span data-uvstatcmt="1679387244279">0</span> 评论
+                    </a>
+                &nbsp;·&nbsp;
+                <a class="item__tag" href="https://jditlee.github.io/articles/2023/03/21/1679387244279.html">
+                    <span data-uvstaturl="https://jditlee.github.io/articles/2023/03/21/1679387244279.html">0</span> 浏览
+                </a>
+            </div>
+        </article>
+        <article class="item">
+            <h2 class="item__title">
+                <a rel="bookmark" href="https://jditlee.github.io/articles/2023/03/13/1678721068966.html">
+                    【推荐】deepwalk原理，实战以及工程化
+                </a>
+                    <sup>
+                        置顶！
+                    </sup>
+                    <sup>
+                        <a href="https://jditlee.github.io/articles/2023/03/13/1678721068966.html">
+                        有更新！
+                        </a>
+                    </sup>
+            </h2>
+            <a class="item__abstract" pjax-title="【推荐】deepwalk原理，实战以及工程化"
+               href="https://jditlee.github.io/articles/2023/03/13/1678721068966.html">
+                    介绍了图召回deepwalk+word2vec，讲了相关的原理以及实战代码，还有如何在工程中应用
+            </a>
+            <div class="fn__clear">
+                2023-05-25   &nbsp;·&nbsp;
+                <a href="https://jditlee.github.io/authors/1672398391564">jditlee</a>
+                &nbsp;·&nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/%E6%8E%A8%E8%8D%90%E7%AE%97%E6%B3%95">
+                        推荐算法
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/deepwalk">
+                        deepwalk
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/word2vec">
+                        word2vec
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/%E5%8F%AC%E5%9B%9E">
+                        召回
+                    </a> &nbsp;
+                    &nbsp;·&nbsp;
+                    <a class="item__tag" href="https://jditlee.github.io/articles/2023/03/13/1678721068966.html#b3logsolocomments">
+                        <span data-uvstatcmt="1678721068966">0</span> 评论
+                    </a>
+                &nbsp;·&nbsp;
+                <a class="item__tag" href="https://jditlee.github.io/articles/2023/03/13/1678721068966.html">
+                    <span data-uvstaturl="https://jditlee.github.io/articles/2023/03/13/1678721068966.html">0</span> 浏览
+                </a>
+            </div>
+        </article>
+        <article class="item">
+            <h2 class="item__title">
+                <a rel="bookmark" href="https://jditlee.github.io/articles/2023/03/10/1678442888495.html">
+                    【NLP】汉语词性对照表
+                </a>
+            </h2>
+            <a class="item__abstract" pjax-title="【NLP】汉语词性对照表"
+               href="https://jditlee.github.io/articles/2023/03/10/1678442888495.html">
+                    词性编码词性名称注 解 Ag形语素形容词性语素。形容词代码为 a，语素代码ｇ前面置以A。 a形容词取英语形容词 adjective的第1个字母。 ad副形词直接作
+            </a>
+            <div class="fn__clear">
+                2023-03-10   &nbsp;·&nbsp;
+                <a href="https://jditlee.github.io/authors/1672398391564">jditlee</a>
+                &nbsp;·&nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/nlp">
+                        nlp
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/%E8%AF%8D%E6%80%A7">
+                        词性
+                    </a> &nbsp;
+                    &nbsp;·&nbsp;
+                    <a class="item__tag" href="https://jditlee.github.io/articles/2023/03/10/1678442888495.html#b3logsolocomments">
+                        <span data-uvstatcmt="1678442888495">0</span> 评论
+                    </a>
+                &nbsp;·&nbsp;
+                <a class="item__tag" href="https://jditlee.github.io/articles/2023/03/10/1678442888495.html">
+                    <span data-uvstaturl="https://jditlee.github.io/articles/2023/03/10/1678442888495.html">0</span> 浏览
+                </a>
+            </div>
+        </article>
+        <article class="item">
+            <h2 class="item__title">
+                <a rel="bookmark" href="https://jditlee.github.io/articles/2023/02/23/1677122561047.html">
+                    【NLP】bert入门之分词源码解析
+                </a>
+            </h2>
+            <a class="item__abstract" pjax-title="【NLP】bert入门之分词源码解析"
+               href="https://jditlee.github.io/articles/2023/02/23/1677122561047.html">
+                    最近做bert模型做分类，涉及到模型上线，需要做文本的编码映射，然后就看了一下bert分词源码，在这里做一下记录 bert编码方法总结： 其实就是分词+分词后的切
+            </a>
+            <div class="fn__clear">
+                2023-02-23   &nbsp;·&nbsp;
+                <a href="https://jditlee.github.io/authors/1672398391564">jditlee</a>
+                &nbsp;·&nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/bert">
+                        bert
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/%E6%A8%A1%E5%9E%8B%E4%B8%8A%E7%BA%BF">
+                        模型上线
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/nlp">
+                        nlp
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/python">
+                        python
+                    </a> &nbsp;
+                    &nbsp;·&nbsp;
+                    <a class="item__tag" href="https://jditlee.github.io/articles/2023/02/23/1677122561047.html#b3logsolocomments">
+                        <span data-uvstatcmt="1677122561047">0</span> 评论
+                    </a>
+                &nbsp;·&nbsp;
+                <a class="item__tag" href="https://jditlee.github.io/articles/2023/02/23/1677122561047.html">
+                    <span data-uvstaturl="https://jditlee.github.io/articles/2023/02/23/1677122561047.html">0</span> 浏览
+                </a>
+            </div>
+        </article>
+        <article class="item">
+            <h2 class="item__title">
+                <a rel="bookmark" href="https://jditlee.github.io/articles/2023/02/20/1676878924135.html">
+                    【chatgpt】ChatGPT之使用open-ai api实现问答（一）
+                </a>
+                    <sup>
+                        <a href="https://jditlee.github.io/articles/2023/02/20/1676878924135.html">
+                        有更新！
+                        </a>
+                    </sup>
+            </h2>
+            <a class="item__abstract" pjax-title="【chatgpt】ChatGPT之使用open-ai api实现问答（一）"
+               href="https://jditlee.github.io/articles/2023/02/20/1676878924135.html">
+                    import os import openai # openai.api_key = os.getenv() openai.api_key = "sk-*****
+            </a>
+            <div class="fn__clear">
+                2023-03-27   &nbsp;·&nbsp;
+                <a href="https://jditlee.github.io/authors/1672398391564">jditlee</a>
+                &nbsp;·&nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/ChatGPT">
+                        ChatGPT
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/python">
+                        python
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/AIGC">
+                        AIGC
+                    </a> &nbsp;
+                    <a rel="tag" class="item__tag" href="https://jditlee.github.io/tags/nlp">
+                        nlp
+                    </a> &nbsp;
+                    &nbsp;·&nbsp;
+                    <a class="item__tag" href="https://jditlee.github.io/articles/2023/02/20/1676878924135.html#b3logsolocomments">
+                        <span data-uvstatcmt="1676878924135">0</span> 评论
+                    </a>
+                &nbsp;·&nbsp;
+                <a class="item__tag" href="https://jditlee.github.io/articles/2023/02/20/1676878924135.html">
+                    <span data-uvstaturl="https://jditlee.github.io/articles/2023/02/20/1676878924135.html">0</span> 浏览
+                </a>
+            </div>
+        </article>
+
+        <nav class="pagination">
+                    <span class="pagination__item pagination__item--active">1</span>
+        </nav>
+</div>
+    </div>
+
+</div>
+<footer class="footer">
+    <div class="wrapper">
+            <a href="https://ld246.com/member/jditlee"
+       title="https://ld246.com/member/jditlee"
+       class="user__site"
+       target="_blank" rel="noopener nofollow">
+        <svg viewBox="0 0 32 32" width="100%" height="100%">
+            <path fill="#d23f31" style="fill: var(--color1, #d23f31)" d="M5.787 17.226h17.033l5.954 9.528c0.47 0.752 0.003 1.361-1.042 1.361h-15.141z"></path>
+            <path d="M10.74 3.927h17.033c1.045 0 1.512 0.609 1.042 1.361l-5.954 9.528h-19.872l6.379-10.209c0.235-0.376 0.849-0.681 1.372-0.681z"></path>
+            <path d="M2.953 17.226h2.839l6.804 10.889h-1.892c-0.523 0-1.137-0.305-1.372-0.681z"></path>
+        </svg>
+    </a>
+
+        <a href="https://github.com/jditlee"
+           title="https://github.com/jditlee"
+           class="user__site"
+           target="_blank" rel="noopener nofollow">
+            <svg viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M16 0.331c-8.836 0-16 7.163-16 16 0 7.069 4.585 13.067 10.942 15.182 0.8 0.148 1.094-0.347 1.094-0.77 0-0.381-0.015-1.642-0.022-2.979-4.452 0.968-5.391-1.888-5.391-1.888-0.728-1.849-1.776-2.341-1.776-2.341-1.452-0.993 0.11-0.973 0.11-0.973 1.606 0.113 2.452 1.649 2.452 1.649 1.427 2.446 3.743 1.739 4.656 1.33 0.143-1.034 0.558-1.74 1.016-2.14-3.554-0.404-7.29-1.777-7.29-7.907 0-1.747 0.625-3.174 1.649-4.295-0.166-0.403-0.714-2.030 0.155-4.234 0 0 1.344-0.43 4.401 1.64 1.276-0.355 2.645-0.532 4.005-0.539 1.359 0.006 2.729 0.184 4.008 0.539 3.054-2.070 4.395-1.64 4.395-1.64 0.871 2.204 0.323 3.831 0.157 4.234 1.026 1.12 1.647 2.548 1.647 4.295 0 6.145-3.743 7.498-7.306 7.895 0.574 0.497 1.085 1.47 1.085 2.963 0 2.141-0.019 3.864-0.019 4.391 0 0.426 0.288 0.925 1.099 0.768 6.354-2.118 10.933-8.113 10.933-15.18 0-8.837-7.164-16-16-16z"></path>
+            </svg>
+        </a>
+
+        <a href="https://twitter.com/neptune_520"
+           title="https://twitter.com/neptune_520"
+           target="_blank"
+           class="user__site" rel="noopener nofollow">
+            <svg viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M32.003 6.075c-1.175 0.525-2.444 0.875-3.769 1.031 1.356-0.813 2.394-2.1 2.887-3.631-1.269 0.75-2.675 1.3-4.169 1.594-1.2-1.275-2.906-2.069-4.794-2.069-3.625 0-6.563 2.938-6.563 6.563 0 0.512 0.056 1.012 0.169 1.494-5.456-0.275-10.294-2.888-13.531-6.862-0.563 0.969-0.887 2.1-0.887 3.3 0 2.275 1.156 4.287 2.919 5.463-1.075-0.031-2.087-0.331-2.975-0.819 0 0.025 0 0.056 0 0.081 0 3.181 2.263 5.838 5.269 6.437-0.55 0.15-1.131 0.231-1.731 0.231-0.425 0-0.831-0.044-1.237-0.119 0.838 2.606 3.263 4.506 6.131 4.563-2.25 1.762-5.075 2.813-8.156 2.813-0.531 0-1.050-0.031-1.569-0.094 2.913 1.869 6.362 2.95 10.069 2.95 12.075 0 18.681-10.006 18.681-18.681 0-0.287-0.006-0.569-0.019-0.85 1.281-0.919 2.394-2.075 3.275-3.394z"></path>
+            </svg>
+        </a>
+        <a href="javascript:void(0)"
+           class="user__site" title="LH26706991">
+            <svg viewBox="0 0 32 32" width="100%" height="100%">
+                <path d="M9.062 9.203c0-0.859-0.562-1.422-1.422-1.422-0.844 0-1.703 0.562-1.703 1.422 0 0.844 0.859 1.406 1.703 1.406 0.859 0 1.422-0.562 1.422-1.406zM20.672 17.125c0-0.562-0.562-1.125-1.422-1.125-0.562 0-1.125 0.562-1.125 1.125 0 0.578 0.562 1.141 1.125 1.141 0.859 0 1.422-0.562 1.422-1.141zM16.984 9.203c0-0.859-0.562-1.422-1.406-1.422-0.859 0-1.703 0.562-1.703 1.422 0 0.844 0.844 1.406 1.703 1.406 0.844 0 1.406-0.562 1.406-1.406zM26.906 17.125c0-0.562-0.578-1.125-1.422-1.125-0.562 0-1.125 0.562-1.125 1.125 0 0.578 0.562 1.141 1.125 1.141 0.844 0 1.422-0.562 1.422-1.141zM22.75 10.922c-0.359-0.047-0.719-0.063-1.094-0.063-5.375 0-9.625 4.016-9.625 8.953 0 0.828 0.125 1.625 0.359 2.375-0.359 0.031-0.703 0.047-1.063 0.047-1.422 0-2.547-0.281-3.969-0.562l-3.953 1.984 1.125-3.406c-2.828-1.984-4.531-4.547-4.531-7.656 0-5.391 5.094-9.625 11.328-9.625 5.563 0 10.453 3.391 11.422 7.953zM32 19.687c0 2.547-1.688 4.813-3.969 6.516l0.859 2.828-3.109-1.703c-1.141 0.281-2.281 0.578-3.406 0.578-5.391 0-9.625-3.688-9.625-8.219s4.234-8.219 9.625-8.219c5.094 0 9.625 3.688 9.625 8.219z"></path>
+            </svg>
+        </a>
+ <br>
+        &copy; 2023
+        <a href="https://jditlee.github.io">Neptune</a>
+        <script>
+  document.addEventListener("DOMContentLoaded", function (event) {
+    if (Label.articleId) {
+      const gitalk = new Gitalk({
+        clientID: 'b6e62888318fa14f6c4b',
+        clientSecret: 'afa5679e9065e72becf40c8c91ea4abe851f9168',
+        repo: 'solo-blog',
+        owner: 'jditlee',
+        admin: ['jditlee'],
+        id: Label.articleId,
+        distractionFreeMode: false
+      })
+
+      gitalk.render('gitalk-container')
+    }
+  })
+</script>
+
+<a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2023020070号</a>
+        <span class="footer__heart">❤️</span>
+    </div>
+</footer>
+<svg class="side__top" id="sideTop" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    <path d="M26.562 13.958c0 0.72 0.583 1.303 1.303 1.303s1.303-0.583 1.303-1.303v0c0-0.72-0.583-1.303-1.303-1.303s-1.303 0.583-1.303 1.303v0zM23.305 10.7c0 0 0 0 0 0 0 0.72 0.583 1.303 1.303 1.303s1.303-0.583 1.303-1.303c0-0 0-0 0-0v0c0-0 0-0 0-0 0-0.72-0.583-1.303-1.303-1.303s-1.303 0.583-1.303 1.303c0 0 0 0 0 0v0zM20.022 7.417c0 0 0 0 0 0 0 0.72 0.583 1.303 1.303 1.303s1.303-0.583 1.303-1.303c0-0 0-0 0-0v0c0-0 0-0 0-0 0-0.72-0.583-1.303-1.303-1.303s-1.303 0.583-1.303 1.303c0 0 0 0 0 0v0zM29.67 0h-27.339c-0.677 0-1.228 0.551-1.228 1.228s0.551 1.228 1.228 1.228h11.151l-10.725 10.725c-0.476 0.476-0.476 1.253 0 1.729 0.226 0.226 0.551 0.351 0.852 0.351s0.626-0.125 0.852-0.351l10.074-10.074v25.936c0 0.677 0.551 1.228 1.228 1.228s1.228-0.551 1.228-1.228v-26.011c0.476 0.426 1.203 0.426 1.679-0.050s0.476-1.253 0-1.729l-0.576-0.576h11.577c0.677 0 1.228-0.551 1.228-1.228 0-0.626-0.551-1.178-1.228-1.178z"></path>
+</svg>
+<script>
+  var Label = {
+    speech: true,
+    servePath: "https://jditlee.github.io",
+    staticServePath: "https://jditlee.github.io",
+    luteAvailable: false,
+    hljsStyle: 'github',
+    langLabel: "zh_CN",
+    version: "4.4.0",
+    staticSite: true,
+    showCodeBlockLn: true,
+  }
+</script>
+<script type="text/javascript"
+        src="https://jditlee.github.io/skins/Bubble/js/common.min.js?1679484362319"
+        charset="utf-8"></script>
+<script type="text/javascript"
+        src="https://jditlee.github.io/skins/Bubble/js/circleMagic.min.js?1679484362319"
+        charset="utf-8"></script>
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/kanbanniang@0.2.12/index.css"/>
+<script async src="https://unpkg.com/kanbanniang@0.2.12/index.js"></script>
+<div class="solo-kanbanniang">
+    <div class="solo-kanbanniang__tip"></div>
+    <canvas id="soloKanbanniang" width="280" height="250"></canvas>
+    <div class="solo-kanbanniang__tool">
+        <svg id="soloKanbanniangHome" viewBox="0 0 32 32" width="100%" height="100%">
+            <path d="M32 18.967l-16-12.42-16 12.42v-5.064l16-12.42 16 12.42zM28 18.516v12h-8v-8h-8v8h-8v-12l12-9z"></path>
+        </svg>
+        <svg id="soloKanbanniangRSS" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M320.364 768q0 45.728-32 77.728t-77.728 32-77.728-32-32-77.728 32-77.728 77.728-32 77.728 32 32 77.728zM612.94 838.272q1.152 16-9.728 27.424-10.272 12-26.848 12h-77.152q-14.272 0-24.576-9.44t-11.424-23.712q-12.576-130.848-105.44-223.712t-223.712-105.44q-14.272-1.152-23.712-11.424t-9.44-24.576V402.24q0-16.576 12-26.848 9.728-9.728 24.576-9.728h2.848q91.424 7.424 174.848 46.016t148 103.712q65.152 64.576 103.712 148t46.016 174.848z m292.576 1.152q1.152 15.424-10.272 26.848-10.272 11.424-26.272 11.424h-81.728q-14.848 0-25.44-10.016t-11.136-24.288q-6.848-122.848-57.728-233.44t-132.288-192-192-132.288-233.44-58.272q-14.272-0.576-24.288-11.136t-10.016-24.864V109.664q0-16 11.424-26.272 10.272-10.272 25.152-10.272h1.728q149.728 7.424 286.56 68.576t243.136 168q106.848 106.272 168 243.136t68.576 286.56z"></path>
+        </svg>
+        <svg id="soloKanbanniangChat" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M802.42709 96.163153H219.476155c-84.48109 0-154.896836 71.746044-154.896836 157.840888v393.119449c0 86.072331 70.415746 157.819398 154.896836 157.819399h214.038818V925.470963s22.526039 40.168862 64.767096 5.734608c30.965246-25.819039 126.721123-91.828428 171.775248-123.385145h132.369773c84.502579 0 154.896836-83.21526 154.896836-157.839865V251.125481c0-86.094844-70.394257-154.962328-154.896836-154.962328zM301.144176 518.002714c-39.427988 0-70.416769-31.576159-70.416769-71.746044 0-40.168862 30.988782-71.746044 70.416769-71.746044 39.426965 0 70.393233 31.577183 70.393234 71.746044 0 40.169885-30.966269 71.746044-70.393234 71.746044z m208.411657 0c-39.450501 0-70.415746-31.576159-70.415746-71.746044 0-40.168862 30.965246-71.746044 70.415746-71.746044 39.405475 0 70.394257 31.577183 70.394257 71.746044 0 40.169885-30.988782 71.746044-70.394257 71.746044z m211.203236 0c-39.426965 0-70.416769-31.576159-70.416769-71.746044 0-40.168862 30.988782-71.746044 70.416769-71.746044s70.415746 31.577183 70.415746 71.746044c-0.001023 40.169885-30.988782 71.746044-70.415746 71.746044z"></path>
+        </svg>
+        <svg id="soloKanbanniangChange" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M936.672 193.216l-226.88-64c-8.704-2.528-18.112-1.12-25.824 3.776-7.68 4.864-12.896 12.736-14.432 21.728C655.712 236.928 595.328 288 512 288c-71.424 0-142.464-103.296-163.776-143.104-7.136-13.28-22.528-19.84-37.024-15.68l-224 64C73.472 197.152 64 209.728 64 224v256a31.93 31.93 0 0 0 11.712 24.736c7.392 6.08 17.152 8.512 26.56 6.624L224 487.04V832c0 52.928 43.072 96 96 96h384c52.928 0 96-43.072 96-96V519.04l121.728 24.352c9.44 1.92 19.2-0.544 26.56-6.624C955.68 530.656 960 521.6 960 512V224c0-14.336-9.536-26.912-23.328-30.784zM672 800H352c-17.664 0-32-14.304-32-32s14.336-32 32-32h320c17.696 0 32 14.304 32 32s-14.304 32-32 32z"></path>
+        </svg>
+        <svg id="soloKanbanniangPhoto" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M898.048 258.048q23.552-1.024 46.592 9.216t40.96 27.136 28.672 39.424 10.752 46.08l0 390.144q0 24.576-10.752 47.104t-28.672 40.448-40.96 28.16-47.616 10.24l-697.344 0q-24.576 0-48.64-10.24t-42.496-27.648-29.696-40.448-11.264-48.64l0-381.952q0-22.528 10.752-45.568t28.672-41.472 39.936-30.208 44.544-11.776l63.488 0 13.312-83.968q3.072-20.48 18.432-32.768t34.816-12.288l456.704 0q19.456 0 34.304 10.752t16.896 34.304l14.336 83.968 54.272 0zM548.864 712.704q40.96 0 77.824-15.872t63.488-42.496 42.496-62.976 15.872-77.312-15.872-77.312-42.496-62.976-63.488-42.496-77.824-15.872-77.312 15.872-63.488 42.496-43.008 62.976-15.872 77.312 15.872 77.312 43.008 62.976 63.488 42.496 77.312 15.872z"></path>
+        </svg>
+        <svg id="soloKanbanniangGithub" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M1024 524.8c0 114.346667-32.554667 217.216-97.706667 308.565333-65.066667 91.306667-149.162667 154.538667-252.288 189.610667-11.989333 2.304-20.778667 0.682667-26.325333-4.778667a27.605333 27.605333 0 0 1-8.362667-20.48v-144.213333c0-44.16-11.52-76.501333-34.645333-97.024 25.344-2.730667 48.085333-6.826667 68.309333-12.288a268.629333 268.629333 0 0 0 62.72-26.666667 187.434667 187.434667 0 0 0 53.973334-45.44c14.421333-18.005333 26.197333-41.898667 35.328-71.765333 9.088-29.824 13.653333-64.128 13.653333-102.826667 0-55.125333-17.536-102.058667-52.650667-140.8 16.426667-41.429333 14.677333-87.893333-5.333333-139.392-12.458667-4.096-30.464-1.578667-54.016 7.509334a355.328 355.328 0 0 0-61.312 30.08L640 271.274667a462.336 462.336 0 0 0-128-17.749334c-43.989333 0-86.656 5.930667-128 17.749334a589.824 589.824 0 0 0-28.330667-18.432c-11.776-7.253333-30.336-16.042667-55.68-26.325334-25.344-10.24-44.416-13.312-57.301333-9.216-19.584 51.498667-21.12 97.962667-4.693333 139.434667-35.114667 38.698667-52.650667 85.632-52.650667 140.757333 0 38.698667 4.565333 72.874667 13.653333 102.485334 9.130667 29.610667 20.778667 53.546667 34.986667 71.765333 14.250667 18.218667 32.128 33.493333 53.674667 45.781333 21.546667 12.288 42.453333 21.205333 62.677333 26.666667 20.224 5.461333 43.008 9.557333 68.309333 12.288-17.749333 16.384-28.629333 39.850667-32.64 70.4a130.005333 130.005333 0 0 1-29.994666 10.24c-10.666667 2.261333-23.338667 3.413333-37.973334 3.413333-14.72 0-29.269333-4.906667-43.690666-14.677333-14.464-9.813333-26.794667-24.064-36.992-42.709333a109.226667 109.226667 0 0 0-32.341334-35.541334c-13.141333-9.130667-24.106667-14.592-33.024-16.426666l-13.312-2.048c-9.344 0-15.786667 1.024-19.328 3.072-3.584 2.090667-4.693333 4.693333-3.328 7.893333 1.28 3.157333 3.328 6.4 5.973334 9.557333 2.688 3.2 5.546667 5.930667 8.661333 8.192l4.693333 3.413334c9.770667 4.565333 19.413333 13.226667 29.013334 25.984 9.514667 12.757333 16.512 24.362667 20.992 34.858666l6.656 15.701334c5.76 17.322667 15.530667 31.317333 29.312 42.026666 13.781333 10.666667 28.672 17.536 44.672 20.48 16 2.986667 31.445333 4.565333 46.336 4.821334 14.890667 0.213333 27.221333-0.597333 36.992-2.389334l15.36-2.730666c0 17.28 0.085333 37.546667 0.298666 60.8l0.341334 36.906666a27.050667 27.050667 0 0 1-8.661334 20.48c-5.76 5.461333-14.677333 7.082667-26.666666 4.778667-103.125333-35.072-187.221333-98.261333-252.330667-189.610667C32.554667 742.058667 0 639.146667 0 524.8c0-95.232 22.869333-183.04 68.693333-263.466667A516.266667 516.266667 0 0 1 254.976 70.4C333.44 23.466667 419.114667 0 512 0c92.885333 0 178.56 23.466667 256.981333 70.4a516.266667 516.266667 0 0 1 186.368 190.976C1001.130667 341.802667 1024 429.653333 1024 524.842667z"></path>
+        </svg>
+        <svg id="soloKanbanniangClose" viewBox="0 0 1024 1024" width="32" height="32">
+            <path d="M517.572566143763 1018.6748601482986C238.26554897656422 1018.6748601482986 11.897910175114305 792.2714997690043 11.897910175114305 513.0002041796496c0-279.3070171671984 226.36763880144977-505.71037754649296 505.6746559686481-505.71037754649296 279.2712955893538 0 505.6746559686481 226.40336037929444 505.6746559686481 505.71037754649296C1023.2472221124112 792.2714997690043 796.8795833109612 1018.6748601482986 517.572566143763 1018.6748601482986zM754.7281214542927 339.25044954334646c13.752807470184345-13.752807470184345 9.680547595895998-40.186775075214015-9.073280772537204-58.94060344364717l-2.143294670678079-2.1075730928334457c-18.7538283684332-18.7538283684332-45.15207439561819-22.861809820566194-58.90488186580257-9.073280772537204l-168.21291007038468 168.24863164822932-180.42968969324974-180.46541127109438c-13.967136937252159-13.967136937252159-40.72259874288353-9.823433907274534-59.72647815622916 9.216167083915742l-2.143294670678079 2.143294670678079c-19.039600991190277 19.003879413345654-23.111860865478626 45.75934121897699-9.180445506071107 59.655035000539876l180.42968969324974 180.46541127109438-176.07165719620428 176.03593561835962c-13.788529048028984 13.824250625873615-9.716269173740633 40.151053497369375 9.073280772537204 58.94060344364717l2.1075730928334457 2.1075730928334457c18.7538283684332 18.7538283684332 45.15207439561819 22.897531398410823 58.90488186580257 9.073280772537204l176.10737877404887-176.10737877404887 170.39192631890742 170.42764789675192c13.967136937252159 13.931415359407513 40.686877165038865 9.85915548511917 59.690756578384516-9.180445506071107l2.1790162485227142-2.1790162485227142c19.039600991190277-18.968157835501014 23.147582443323273-45.72361964113239 9.180445506071107-59.690756578384516l-170.39192631890742-170.42764789675192L754.7281214542927 339.25044954334646z"></path>
+        </svg>
+    </div>
+</div>
+
+</body>
+</html>
+
+<!-- Generated by Latke (https://github.com/88250/latke) in 29ms, 2023/06/07 15:25:35 -->

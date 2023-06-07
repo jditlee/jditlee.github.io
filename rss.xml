@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Neptune</title>
+    <link>https://jditlee.github.io</link>
+    <atom:link href="https://jditlee.github.io/rss.xml" rel="self" type="application/rss+xml"/>
+    <description>Dark, cold, and whipped by supersonic winds, ice giant Neptune is the eighth and most distant planet in our solar system. </description>
+    <generator>Solo, v4.4.0, https://b3log.org/solo</generator>
+    <lastBuildDate>Wed, 07 Jun 2023 15:25:33 +0800</lastBuildDate>
+    <language>zh-cn</language>
+    <item>
+      <title>solo博客友链征集</title>
+      <link>https://jditlee.github.io/articles/2023/06/01/1685614468233.html</link>
+      <description/>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/06/01/1685614468233.html</guid>
+      <category>blog</category>
+      <category>solo</category>
+      <category>友链</category>
+      <pubDate>Thu, 01 Jun 2023 18:14:28 +0800</pubDate>
+    </item>
+    <item>
+      <title>LLM微调实战，做自己的chatgpt (一）</title>
+      <link>https://jditlee.github.io/articles/2023/05/31/1685526466456.html</link>
+      <description/>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/05/31/1685526466456.html</guid>
+      <category>华佗</category>
+      <category>ChatGPT</category>
+      <category>LLAMA</category>
+      <category>开源</category>
+      <pubDate>Wed, 31 May 2023 18:00:25 +0800</pubDate>
+    </item>
+    <item>
+      <title>Linux纯命令行配置clash，自由访问GPT api</title>
+      <link>https://jditlee.github.io/articles/2023/05/30/1685437715197.html</link>
+      <description/>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/05/30/1685437715197.html</guid>
+      <category>科学上网</category>
+      <category>github</category>
+      <category>clash</category>
+      <category>运维</category>
+      <pubDate>Tue, 30 May 2023 17:14:56 +0800</pubDate>
+    </item>
+    <item>
+      <title>【推荐】多目标排序以及MMOE原理解析</title>
+      <link>https://jditlee.github.io/articles/2023/05/25/1685011984247.html</link>
+      <description/>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/05/25/1685011984247.html</guid>
+      <category>推荐算法</category>
+      <category>MTL</category>
+      <category>排序</category>
+      <category>MMOE</category>
+      <pubDate>Thu, 25 May 2023 18:57:13 +0800</pubDate>
+    </item>
+    <item>
+      <title>【推荐】deepwalk原理，实战以及工程化</title>
+      <link>https://jditlee.github.io/articles/2023/03/13/1678721068966.html</link>
+      <description><![CDATA[<p>介绍了图召回deepwalk+word2vec，讲了相关的原理以及实战代码，还有如何在工程中应用</p>]]></description>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/03/13/1678721068966.html</guid>
+      <category>召回</category>
+      <category>deepwalk</category>
+      <category>word2vec</category>
+      <category>推荐算法</category>
+      <pubDate>Thu, 25 May 2023 18:56:57 +0800</pubDate>
+    </item>
+    <item>
+      <title>git修改提交的用户名邮箱</title>
+      <link>https://jditlee.github.io/articles/2023/05/24/1684913175528.html</link>
+      <description><![CDATA[<p>git修改历史提交信息的用户名，邮箱</p>]]></description>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/05/24/1684913175528.html</guid>
+      <category>git</category>
+      <category>github</category>
+      <pubDate>Wed, 24 May 2023 15:26:15 +0800</pubDate>
+    </item>
+    <item>
+      <title>一些想法</title>
+      <link>https://jditlee.github.io/mind</link>
+      <description><![CDATA[<p>生活中的碎碎念</p>]]></description>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/mind</guid>
+      <category>随想</category>
+      <category>杂念</category>
+      <pubDate>Mon, 15 May 2023 10:46:01 +0800</pubDate>
+    </item>
+    <item>
+      <title>【爬虫】模拟登录自动签到</title>
+      <link>https://jditlee.github.io/articles/2023/03/30/1680173058503.html</link>
+      <description/>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/03/30/1680173058503.html</guid>
+      <category>爬虫</category>
+      <category>python</category>
+      <category>cron</category>
+      <pubDate>Thu, 13 Apr 2023 11:54:17 +0800</pubDate>
+    </item>
+    <item>
+      <title>【chatgpt】开源类chatgpt项目汇总</title>
+      <link>https://jditlee.github.io/articles/2023/03/31/1680258133658.html</link>
+      <description><![CDATA[<p>类chatgpt项目汇总</p>]]></description>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/03/31/1680258133658.html</guid>
+      <category>开源</category>
+      <category>ChatGPT</category>
+      <category>ML</category>
+      <category>LLAMA</category>
+      <pubDate>Tue, 11 Apr 2023 14:46:38 +0800</pubDate>
+    </item>
+    <item>
+      <title>【chatgpt】一些免费的chatgpt体验网站</title>
+      <link>https://jditlee.github.io/articles/2023/03/27/1679916728841.html</link>
+      <description><![CDATA[<p>一些免费的chatgpt体验网站</p>]]></description>
+      <author>jditlee</author>
+      <guid>https://jditlee.github.io/articles/2023/03/27/1679916728841.html</guid>
+      <category>凌陨心</category>
+      <category>ML</category>
+      <category>ChatGPT</category>
+      <category>Neptune</category>
+      <pubDate>Thu, 30 Mar 2023 15:27:50 +0800</pubDate>
+    </item>
+  </channel>
+</rss>

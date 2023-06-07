@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /*.do
+Disallow: /start
+Disallow: /logout
+Disallow: /authors/*
+Disallow: /console/*
